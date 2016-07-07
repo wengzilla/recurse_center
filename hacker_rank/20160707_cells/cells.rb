@@ -25,14 +25,16 @@ class ConnectionSearcher
     unchecked_list = grid.one_cells
 
     while unchecked_list.length > 0
-      stack = [unchecked_list.first] # take first element off of unchecked list and put it onto the stack
+      stack = [unchecked_list.first]
       current_group = []
 
+      # Run DFS...
       while stack.length > 0
         current_node = stack.pop
         current_group << unchecked_list.delete(current_node)
         stack += grid.neighboring_cells(current_node).select{ |cell| unchecked_list.index(cell) }
       end
+      
       self.groups << current_group.compact
     end
   end
