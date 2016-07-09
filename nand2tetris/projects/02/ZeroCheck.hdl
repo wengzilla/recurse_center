@@ -1,0 +1,20 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/02/Inc16.hdl
+
+/**
+ * Zero check:
+ * Return 1 if in == 0
+ */
+
+CHIP ZeroCheck {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+      Or8Way(in=in[0..7], out=inLSB);
+      Or8Way(in=in[8..15], out=inMSB);
+      Or(a=inLSB, b=inMSB, out=zero);
+      Not(in=zero, out=out);
+}
