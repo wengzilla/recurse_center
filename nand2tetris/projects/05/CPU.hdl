@@ -39,5 +39,44 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // *********** outM ***********
+        // if MSB is 1, then use ALU output; if MSB is 0, then send instruction to A Register
+        Mux16(a = instruction, b = aluOut, sel = instruction[15], out = instructionMuxOut);
+
+        Not(in = instruction[15], out = addrInstruct);
+        Not(in = addrInstruct, out = compInstruct);
+        Or(a = addrInstruct, b = instruction[5], out = loadA);
+
+        ARegister(in = instructionMuxOut, load = loadA, out = aRegOut);
+
+        And(a = compInstruct, b = instruction[4], out = loadD);
+        DRegister(in = aluOut, load = loadD, out = dataRegOut);
+        Mux16(a = aRegOut, b = inM, sel = instruction[12], out = addrMemRegOut);
+
+        ALU(x = dataRegOut, y = addrMemRegOut, zx = instruction[11], nx = instruction[10], zy = instruction[9], ny = instruction[8], f = instruction[7], no = instruction[6], out=aluOut, zr=zero, ng=negative);
+
+        And16(a = aluOut, b = true, out = outM);
+
+    // *********** pc ***********
+        PC(in = aRegOut, load = loadBit, inc = incBit, reset = reset, out=pcOut);
+        DropMSB(in = pcOut, out = pc);
+
+        // Jump Logic for Program Counter (pc)
+        Or(a = negative, b = zero, out = negativeOrZero);
+        Not(in = negativeOrZero, out = positive);
+        And(a = negative, b = instruction[2], out = negativeMatch);
+        And(a = zero, b = instruction[1], out = zeroMatch);
+        And(a = positive, b = instruction[0], out = positiveMatch);
+
+        Or(a = negativeMatch, b = zeroMatch, out = negativeZeroMatch);
+        Or(a = negativeZeroMatch, b = positiveMatch, out = jumpMatch);
+        And(a = jumpMatch, b = compInstruct, out = loadBit);
+
+        Not(in = loadBit, out = incBit);
+
+    // *********** addressM ***********
+        DropMSB(in = aRegOut, out = addressM);
+
+    // *********** writeM ***********
+        And(a = instruction[3], b = instruction[15], out = writeM);
 }

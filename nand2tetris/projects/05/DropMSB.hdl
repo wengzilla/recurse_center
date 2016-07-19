@@ -1,0 +1,45 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid. Access to any address in 
+ * the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the 
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+CHIP DropMSB {
+    IN in[16];
+    OUT out[15];
+
+    PARTS:
+      And(a = in[0], b = true, out = out[0]);
+      And(a = in[1], b = true, out = out[1]);
+      And(a = in[2], b = true, out = out[2]);
+      And(a = in[3], b = true, out = out[3]);
+      And(a = in[4], b = true, out = out[4]);
+      And(a = in[5], b = true, out = out[5]);
+      And(a = in[6], b = true, out = out[6]);
+      And(a = in[7], b = true, out = out[7]);
+      And(a = in[8], b = true, out = out[8]);
+      And(a = in[9], b = true, out = out[9]);
+      And(a = in[10], b = true, out = out[10]);
+      And(a = in[11], b = true, out = out[11]);
+      And(a = in[12], b = true, out = out[12]);
+      And(a = in[13], b = true, out = out[13]);
+      And(a = in[14], b = true, out = out[14]);
+}
