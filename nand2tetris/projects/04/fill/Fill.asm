@@ -10,33 +10,23 @@
 
 // Put your code here.
 
+@value // 0 is white, -1 is black
+M = 0
+
 (START)
   @KBD
-  D = M
+  D = M // save keypress in D
 
-  @IF_KEY_PRESS
-  D; JGT
+  @COLOR
+  D; JEQ // if D is 0, then color as 0
 
-  @IF_NO_KEY_PRESS
-  0; JMP
+  (KEY_PRESS)
+    D = -1 // change value to -1 (black)
 
-  /////////
-
-  (IF_KEY_PRESS)
+  (COLOR) // Set D to color value before entering COLOR function
     @value
-    M = -1
-    @COLOR
-    0; JMP
+    M = D
 
-  (IF_NO_KEY_PRESS)
-    @value
-    M = 0
-    @COLOR
-    0; JMP
-
-  /////////
-
-  (COLOR)
     @SCREEN
     D = A
     @i // set @i variable to SCREEN
@@ -54,12 +44,16 @@
       D = M
 
       @loop_limit
-      D = M - D 
+      D = M - D
       @STOP_COLOR_LOOP
-      D; JLT // exit loop if i > loop_limit
+      D; JLE // exit loop if i > loop_limit
 
       @value
       D = M
+
+      @colored
+      M = D // set colored flag to value
+
       @i
       A = M
       M = D // RAM[addr] = value
