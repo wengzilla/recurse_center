@@ -1,25 +1,20 @@
 require "#{File.expand_path File.dirname(__FILE__)}/code"
 
 class Parser
-  attr_accessor :file, :current_line_count, :current_parser_line_count,
-    :current_line
+  attr_accessor :file, :current_line_idx, :current_line, :symbol_table
 
-  def initialize(path_name)
+  def initialize(path_name, symbol_table = {})
     @file = File.open(path_name)
-    @current_line_count = -1
-    @current_parser_line_count = -1
-  end
-
-  def command
-    current_line
+    @current_line_idx = 0
+    @symbol_table = symbol_table
   end
 
   def advance
     self.current_line = cleaned_next_line
     if current_line && (comment? || white_space?)
       advance
-    else
-      self.current_parser_line_count += 1
+    elsif current_line && (a_command? || c_command?)
+      self.current_line_idx += 1
     end
     current_line
   end
@@ -27,17 +22,43 @@ class Parser
   def generate_machine_code
     if a_command?
       translate_a_command
-    elsif l_command?
-      nil # NO-OP FOR NOW... TO BE REVISED TO USE SYMBOLS
     elsif c_command?
       translate_c_command
+    end
+  end
+
+  def l_command?
+    current_line[0] == "("
+  end
+
+  def rewind
+    file.rewind
+  end
+
+  def symbol
+    if l_command?
+      current_line.gsub(/[\(\)]/,"")
+    elsif a_command?
+      current_line.gsub(/@/, "")
     end
   end
 
   private
 
   def translate_a_command
-    symbol.to_i.to_s(2).rjust(16, "0")
+    if memory_address?
+      symbol.to_i.to_s(2).rjust(16, "0")
+    else
+      translate_symbol.to_s(2).rjust(16, "0")
+    end
+  end
+
+  def translate_symbol
+    if symbol_table.contains?(symbol)
+      symbol_table.get_address(symbol)
+    else
+      symbol_table.add_variable(symbol)
+    end
   end
 
   def translate_c_command
@@ -47,10 +68,6 @@ class Parser
   def cleaned_next_line
     line = file.gets
     line.chomp.gsub("\W", "") if line
-  end
-
-  def line_count
-    self.line_count ||= file.readlines.size
   end
 
   def comment?
@@ -86,19 +103,11 @@ class Parser
     current_line[0] == "@"
   end
 
-  def l_command?
-    current_line[0] == "("
-  end
-
   def c_command?
     !a_command? && !l_command?
   end
 
-  def symbol
-    if l_command?
-      current_line.gsub(/[\(\)]/,"")
-    elsif a_command?
-      current_line.gsub(/@/, "")
-    end
+  def memory_address?
+    !!current_line.match(/^@[0-9]+$/)
   end
 end
