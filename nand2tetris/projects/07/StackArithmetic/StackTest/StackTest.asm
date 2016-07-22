@@ -5,14 +5,12 @@ M = D
 @17
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @17
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -31,20 +29,17 @@ D = 0
 D = -1
 (END_0)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @17
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @16
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -63,20 +58,17 @@ D = 0
 D = -1
 (END_1)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @16
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @17
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -95,20 +87,17 @@ D = 0
 D = -1
 (END_2)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @892
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @891
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -127,20 +116,17 @@ D = 0
 D = -1
 (END_3)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @891
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @892
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -159,20 +145,17 @@ D = 0
 D = -1
 (END_4)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @891
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @891
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -191,20 +174,17 @@ D = 0
 D = -1
 (END_5)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32767
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32766
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -223,20 +203,17 @@ D = 0
 D = -1
 (END_6)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32766
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32767
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -255,20 +232,17 @@ D = 0
 D = -1
 (END_7)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32766
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @32766
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -287,26 +261,22 @@ D = 0
 D = -1
 (END_8)
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @57
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @31
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @53
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -317,14 +287,12 @@ M = M - 1
 A = M
 D = M + D
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @112
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -335,16 +303,14 @@ M = M - 1
 A = M
 D = M - D
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
 A = M
 D = -M
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -355,14 +321,12 @@ M = M - 1
 A = M
 D = M & D
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @82
 D = A
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
@@ -373,14 +337,12 @@ M = M - 1
 A = M
 D = M | D
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D
 @SP
 M = M - 1
 A = M
 D = !M
 @SP
-M = M + 1
-A = M - 1
+AM = M + 1
 M = D

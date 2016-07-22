@@ -58,6 +58,7 @@ class CodeWriter
   def pop_off_stack(segment, index)
     [
       stack_pointer.pop,
+      "D = M",
       stack_pointer.set_address(segment, index),
       "M = D"
     ].join("\n")
@@ -131,7 +132,7 @@ class CodeWriter
 
   class StackPointer
     INITIAL_ADDRESS = 256
-    SEGMENT_MAP = {"local" => "@LCL", "argument" => "@ARG", "this" => "@THIS", "that" => "@THAT", "temp" => 5, "static" => 16, "pointer" => 3}
+    SEGMENT_MAP = {"local" => "@LCL", "argument" => "@ARG", "this" => "@THIS", "that" => "@THAT"}
     ADDRESS_MAP = {"temp" => "@5", "static" => "@16", "pointer" => "@3"}
 
     attr_accessor :address
@@ -150,6 +151,7 @@ class CodeWriter
     end
 
     def pop
+      # leave popped element in M
       [
         "@SP",
         "M = M - 1",
@@ -168,16 +170,32 @@ class CodeWriter
     end
 
     def set_address(segment, index)
+      temp_variable = "@R13"
       [
-        "#{SEGMENT_MAP}"
-      ]
+        push, # put D on stack
+        load_segment_map(segment),
+        "@#{index}",
+        "D = D + A", 
+        "#{temp_variable}", #save index + base_address in R13
+        "M = D",
+        pop,
+        "D = M",
+        "#{temp_variable}",
+        "A = M",
+      ].join("\n")
     end
 
-    def add_zero(index)
-      if index == 0
-        "A = M"
-      else
-        "A = M + #{index}"
+    def load_segment_map(segment)
+      if SEGMENT_MAP.has_key?(segment)
+        [
+          "#{SEGMENT_MAP[segment]}",
+          "D = M", # THIS WILL BE DIFFERENT FOR CONSTANT ADDRS!!!
+        ].join("\n")
+      elsif ADDRESS_MAP.has_key?(segment)
+        [
+          "#{ADDRESS_MAP[segment]}",
+          "D = A", # THIS WILL BE DIFFERENT FOR CONSTANT ADDRS!!!
+        ].join("\n")
       end
     end
   end
