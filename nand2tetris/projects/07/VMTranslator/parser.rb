@@ -1,5 +1,5 @@
 class Parser
-  attr_accessor :file, :current_line_idx, :current_line, :symbol_table
+  attr_accessor :file, :current_line
 
   ARITHMETIC_COMMANDS = ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]
 
@@ -35,7 +35,7 @@ class Parser
   end
 
   def arg2
-    tokenized_line[2]
+    tokenized_line[2].to_i
   end
 
 

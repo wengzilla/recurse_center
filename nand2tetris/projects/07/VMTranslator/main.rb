@@ -20,6 +20,8 @@ class Main
         code_writer.write_push_pop(parser.command, parser.arg1, parser.arg2)
       end
     end
+
+    code_writer.close
   end
 
   def output_file
