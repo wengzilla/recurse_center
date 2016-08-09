@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
+<head>
+    <script src="https://d3js.org/d3.v4.0.0-alpha.22.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</head>
 
-body {
-  margin: 0;
-}
-
-.bit {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border: solid 1px #000;
-}
-
-</style>
 <body>
-<script src="https://d3js.org/d3.v4.0.0-alpha.22.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <style>
+        body {
+          margin: 0;
+        }
+
+        .bit {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border: solid 1px #666;
+        }
+    </style>
+</body>
+
 <script>
 
 var ASCII = "01010100 01101000 01100101 00100000 01110001 01110101 01101001 01100011 01101011 00100000 01100010 01110010 01101111 01110111 01101110 00100000 01100110 01101111 01111000 00100000 01101010 01110101 01101101 01110000 01110011 00100000 01101111 01110110 01100101 01110010 00100000 01110100 01101000 01100101 00100000 01101100 01100001 01111010 01111001 00100000 01100100 01101111 01100111"
@@ -27,89 +30,92 @@ var ASCII_len = ASCII.length, //
     huffman_len = huffman_encoded.length,
     destination_index = 0;
     // 960/500 gives a 1.92 ratio
-    z = 20,
-    body_width = 64 * 10;
-    cell_size = 10;
+    square_width = 25,
+    cell_size = 20,
+    body_width = square_width * cell_size,
     x = 48,//Math.ceil((ASCII_len / 2.92) * 1.92),
     y = 25;//Math.ceil(ASCII_len / 2.92);
 
 var indexToPixel = function(index) {
-    row = Math.floor(index / 10);
-    col = index % 10;
-    return { x: row * cell_size, y: col * cell_size};
+    row = Math.floor(index / square_width);
+    col = index % square_width;
+    return { x: col * cell_size, y: row * cell_size };
 };
 
+var svgContainer, rectangle;
 
+svgContainer = d3.select("body").append("svg")
+    .attr("width", 800)
+    .attr("height", 800);
 
 function update(data) {
-    if (data.length == 0) {
-        return false
-    }
+    if (data.length == 0) { return false; }
 
-    // console.log("Data: " + data);
+    rectangles = svgContainer.selectAll("rect")
+                    .data(data);
 
-    // bind data
-    var bits = d3.select("body").selectAll("div").data(data);
-      
-    // enter - the enter actually draws the stuff to the screen...
-    bits.enter()
-      .append("div")
-      .attr("id", function(d) { return "square-"+String(d.index); } )
-      .attr("class", function(d) { return "bit"; } )
+    rectangles.enter()
+        .append("rect")
+        .attr("width", cell_size)
+        .attr("height", cell_size)
+        .style("stroke", function(d) { return "#999999" })
+        .style("stroke-width", function(d) { return "1px" })
 
-    // update
-    bits.style("background-color", function(d) { return (d.value == "0") ? "white" : "black" })
-        .style("left", function(d) { return String((d.index % x) * z) + "px"; })
-        .style("top", function(d) { return String(Math.floor(d.index / x) * z) + "px"; })
-        
-    // exit
-    bits.exit().remove();
+    rectangles
+        .style("fill", function(d) { return (d.value == "0") ? "white" : "black" })
+        .attr("id", function(d) { return "square-"+String(d.index); } )
+        .attr("x", function(d) { return String(indexToPixel(d.index).x) + "px"; })
+        .attr("y", function(d) { return String(indexToPixel(d.index).y) + "px"; })
 
-    // setTimeout(function() { update(data.slice(0, data.length - 1)) }, 200);
+    rectangles.exit().remove();
 }
-
-var elements = d3.range(500);
-// update(elements);
-
-function compress(data) {
-    // console.log("DATA: " + data);
-    var raw_index = 0;
-    var compress_index = 0;
-    var BLOCK_SIZE = 8;
-
-    var timeout = 100;
-    var compressed = [];
-
-    for (var i = 0; i < data.length / 8; i++) {
-        raw_index = BLOCK_SIZE * (i + 1);
-
-        // pretend 8 bits compresses to 5 always.
-        for (var j = compress_index; j < Math.min(compress_index + 1, compress_index + (data.length - raw_index)); j++) {
-            compressed[j] = j;
-        }
-
-        var new_data = compressed.concat(data.slice(raw_index, data.length));
-        
-        setTimeout(function(d){ update(d); }, timeout * i, new_data);
-
-        compress_index = 1 * (i + 1);
-    }
-}
-
-// compress(elements);
 
 function artificial_compress(data, compressed_data) {
-    for (var current_block = 0; current_block < _.last(data).block_idx; current_block++) {
+    update(data) // draw the initial block.
+
+    for (var current_block = 0; current_block <= _.last(data).block_idx; current_block++) {
         uncompressed_bits = _.filter(data, function(bits) { return bits.block_idx > current_block })
         compressed_bits = _.filter(compressed_data, function(bits) { return bits.block_idx <= current_block })
 
+        uncompressed_block = _.filter(data, function(bits) { return bits.block_idx == current_block })
+
         var new_data = compressed_bits.concat(uncompressed_bits);
-        
-        setTimeout(function(d){ update(d); }, 500 * current_block, new_data);
+        setTimeout(function(d, current_block, ub){ update(d); moveToCenter(current_block) }, 1000 * current_block, new_data, current_block, uncompressed_block);
     }
 }
 
-function objectify(data) {
+function highlightBlock(block_idx) {
+  x = d3.selectAll("rect")
+    .filter(function(d) { return d.block_idx == (block_idx + 1) && d.label == "ascii" })
+  console.log(x)
+
+  d3.selectAll("rect")
+    .filter(function(d) { return d.block_idx == (block_idx + 1) && d.label == "ascii" })
+    .style("fill", "orange")
+    .transition()
+      .duration(1000)
+      .style("fill", function() {
+        var that = d3.select(this),
+            fill0 = that.style("fill"),
+            fill1 = that.style("fill", null).style("fill");
+        that.style("fill", fill0);
+        return fill1;
+      });
+}
+
+function moveToCenter(block_idx) {
+  d3.selectAll("rect")
+    .filter(function(d) { console.log(d); return d.block_idx == (block_idx + 1) && d.label == "ascii" })
+    .transition()
+      .duration(500)
+      .style("transform", "translate(100px, 100px) scale(2)")
+    .transition()
+      .delay(500)
+      .style("transform", "translate(100px, 100px) scale(0.01)")
+      .remove();
+}
+
+function objectify(data, label) {
     var objs = [], index = 0;
     var blocks = data.split(" "); // split into blocks
     blocks.forEach(function(block, block_idx) {
@@ -120,7 +126,8 @@ function objectify(data) {
                 block_length: block.length,
                 bit_idx: bit_idx,
                 value: bit,
-                index: index++
+                index: index++,
+                label: label
             };
             objs.push(obj)
         });
@@ -129,6 +136,6 @@ function objectify(data) {
     return objs;
 }
 
-artificial_compress(objectify(ASCII), objectify(huffman_encoded));
+artificial_compress(objectify(ASCII, "ascii"), objectify(huffman_encoded, "huffman"));
 
 </script>
