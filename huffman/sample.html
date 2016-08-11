@@ -8,35 +8,20 @@
   <body>
 
     <script>
-      var scale = d3.scale.linear()
-        .domain([1, 5])   // Data space
-        .range([0, 200]); // Pixel space
-      var svg = d3.select("body").append("svg")
-        .attr("width",  250)
-        .attr("height", 250);
-      function render(data, color){
-        // Bind data
-        var rects = svg.selectAll("rect").data(data);
-        
-        // Enter
-        rects.enter().append("rect")
-          .attr("y", 50)
-          .attr("width",  20)
-          .attr("height", 20);
-        
-        // Update
-        rects
-          .attr("x", scale)
-          .attr("fill", color);
-        
-        // Exit
-        rects.exit().remove();
-      }
-      setTimeout( function (){ render([1, 2, 2.5],     "red");    }, 1000);
-      setTimeout( function (){ render([1, 2, 3, 4, 5], "blue");   }, 2000);
-      setTimeout( function (){ render([1, 2],          "green");  }, 3000);
-      setTimeout( function (){ render([3, 4, 5],       "cyan");   }, 4000);
-      setTimeout( function (){ render([4, 5],          "magenta");}, 5000);
+      var svgContainer = d3.select("body").append("svg")
+                                          .attr("width", 300)
+                                          .attr("height", 300);
+      boundingSquare = svgContainer
+                  .append("rect")
+                  .attr("width", 100)
+                  .attr("height", 100)
+                  .attr("x", "0")
+                  .attr("y", "0")
+                  .style("stroke", "red")
+                  .style("stroke-width", "3" + "px")
+                  .style("fill", "white")
+
+//Draw the Rectangle
     </script>
   </body>
 </html>
